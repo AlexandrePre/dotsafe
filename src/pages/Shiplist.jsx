@@ -5,11 +5,17 @@ import Ship from "../components/Ship";
 
 export default function ShipList() {
   const [shipList, setShipList] = useState([]);
-  // const [accessoryList, setAccessoryList] = useState([]);
   const [selectedBateau, setSelectedBateau] = useState();
+  const [date, setDate] = useState();
 
-  const handleChange = (event) => {
+  const handleChangeShip = (event) => {
     setSelectedBateau(event.target.value);
+    setDate("");
+  };
+
+  const handleChangeDate = (event) => {
+    setDate(event.target.value);
+    setSelectedBateau("");
   };
 
   const getAllShip = () => {
@@ -22,7 +28,6 @@ export default function ShipList() {
     getAllShip();
   }, []);
 
-
   return (
     <div>
       <div className="titre">
@@ -30,35 +35,55 @@ export default function ShipList() {
       </div>
 
       <Getchrono />
-      {/* <form className="center">
+
+      <form className="ship-center">
         <label htmlFor="ship-select">
-          Filter by{" "}
-          <select id="cupcake-select" onChange={handleChange}>
+          Filtrer par raison de fermeture{" "}
+          <select id="ship-select" onChange={handleChangeShip}>
             <option value="">---</option>
 
-            {shipList.records.map((bat) => (
-              <option key={bat.id} value={bat.id}>
-                {bat.fields.bateau}
-              </option>
-            ))}
+            {shipList.records &&
+              shipList.records.map((bat) => (
+                <option key={bat.recordid} value={bat.recordid}>
+                  {bat.fields.bateau}
+                </option>
+              ))}
           </select>
         </label>
-      </form> */}
-      {/* <ul className="cupcake-list" id="cupcake-list">  */}
-      {/* Step 2: repeat this block for each cupcake */}
-      {/* {shipList.records.filter(
-        (bats) => selectedBateau === "" || bats.bat_id === selectedBateau
-      )} */}
+      </form>
+      <form className="date-center">
+        <label htmlFor="date-select">
+          Filter par date{" "}
+          <select id="date-select" onChange={handleChangeDate}>
+            <option value="">---</option>
+
+            {shipList.records &&
+              shipList.records.map((dat) => (
+                <option key={dat.recordid} value={dat.recordid}>
+                  {dat.fields.date_passage}
+                </option>
+              ))}
+          </select>
+        </label>
+      </form>
       <div className="ship-item">
         {shipList.records &&
-          shipList.records.map((ship) => (
-            <Ship
-              datePassage={ship.fields.date_passage}
-              reOuvertureCirculation={ship.fields.re_ouverture_a_la_circulation}
-              fermetureCirculation={ship.fields.fermeture_a_la_circulation}
-              bateau={ship.fields.bateau}
-            />
-          ))}
+          shipList.records
+            .filter(
+              (close) =>
+                selectedBateau === "" || close.recordid === selectedBateau
+            )
+            .filter((closeDate) => date === "" || closeDate.recordid === date)
+            .map((ship) => (
+              <Ship
+                datePassage={ship.fields.date_passage}
+                reOuvertureCirculation={
+                  ship.fields.re_ouverture_a_la_circulation
+                }
+                fermetureCirculation={ship.fields.fermeture_a_la_circulation}
+                bateau={ship.fields.bateau}
+              />
+            ))}
       </div>
     </div>
   );
